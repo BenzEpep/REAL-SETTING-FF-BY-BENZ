@@ -1,78 +1,268 @@
-<!DOCTYPE html><html lang="ms">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PANEL BY BENZ — VIP Dashboard</title>
-  <style>
-    :root{
-      --bg:#0b0b0b;--card:#151515;--line:#242424;--accent:#e10600;--text:#f3f3f3;--muted:#9a9a9a;--ok:#22c55e;
-    }
-    *{box-sizing:border-box;font-family:Inter,Segoe UI,system-ui,-apple-system,Arial}
-    body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,#220000,transparent),linear-gradient(#0b0b0b,#0f0f0f);color:var(--text)}
-    header{padding:28px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#ff2a2a,#b30000);display:grid;place-items:center;font-weight:800}
-    .title h1{margin:0;font-size:1.25rem;letter-spacing:.5px}
-    .title p{margin:4px 0 0;color:var(--muted);font-size:.85rem}
-    .vip{padding:6px 10px;border-radius:999px;border:1px solid #3a0b0b;background:rgba(225,6,0,.12);color:#ff9a9a;font-size:.75rem}.wrap{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.card{background:linear-gradient(180deg,#151515,#121212);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
-.card h2{margin:0 0 12px;font-size:1rem;color:#ffb3b3;letter-spacing:.4px}
+<meta charset="UTF-8">
+<title>AntiCheat MY - Full Version</title>
+<style>
+/* --- Reset & Body --- */
+body { margin:0; font-family: 'Segoe UI', Tahoma, sans-serif; background:#0f172a; color:white; }
+.container { max-width:1000px; margin:auto; padding:20px; }
 
-.row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px dashed #232323}
-.row:first-of-type{border-top:none}
-.label{font-size:.92rem}
-.sub{display:block;color:var(--muted);font-size:.72rem;margin-top:2px}
+/* --- Card & Form --- */
+.card { background:#1e293b; padding:20px; border-radius:10px; margin-top:15px; box-shadow:0 0 15px rgba(0,0,0,0.3);}
+input, select, textarea, button { width:100%; padding:10px; margin:5px 0; border-radius:6px; border:none; font-size:14px;}
+button { background:#ef4444; color:white; cursor:pointer; font-weight:bold; transition:0.3s;}
+button:hover { background:#dc2626; }
 
-/* toggle */
-.switch{position:relative;width:46px;height:26px}
-.switch input{display:none}
-.slider{position:absolute;inset:0;border-radius:999px;background:#2a2a2a;transition:.25s}
-.slider:before{content:"";position:absolute;width:20px;height:20px;left:3px;top:3px;border-radius:50%;background:#cfcfcf;transition:.25s}
-.switch input:checked + .slider{background:rgba(34,197,94,.35)}
-.switch input:checked + .slider:before{transform:translateX(20px);background:var(--ok)}
+/* --- Navigation --- */
+.nav { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:10px;}
+.nav select { width:auto; padding:8px; }
 
-.status{margin-top:12px;padding:10px;border-radius:12px;border:1px solid var(--line);background:#101010;color:var(--muted);font-size:.8rem}
-footer{max-width:1100px;margin:10px auto 28px;padding:0 16px;color:var(--muted);font-size:.8rem}
+/* --- Badges --- */
+.badge { padding:4px 8px; border-radius:5px; font-size:12px; font-weight:bold; }
+.green { background:#16a34a; }
+.orange { background:#f59e0b; }
+.red { background:#dc2626; }
 
-  </style>
+/* --- Hidden --- */
+.hidden { display:none; }
+
+/* --- Table for search/filter --- */
+#reportList table { width:100%; border-collapse:collapse; }
+#reportList th, #reportList td { padding:8px; text-align:left; border-bottom:1px solid #374151; }
+#reportList th { background:#1f2937; }
+a { color:#38bdf8; text-decoration:none; }
+</style>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo">B</div>
-      <div class="title">
-        <h1>PANEL BY BENZ</h1>
-        <p>Premium • VIP • Dashboard Showcase</p>
-      </div>
+<div class="container">
+
+  <!-- Navigation -->
+  <div class="nav">
+    <h2>🛡️ AntiCheat MY</h2>
+    <select onchange="setLang(this.value)">
+      <option value="bm">Bahasa Melayu</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="card">
+    <h3 id="loginTitle">Log Masuk</h3>
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- USER PAGE -->
+  <div id="userPage" class="hidden">
+    <div class="card">
+      <h3 id="reportTitle">Lapor Pemain</h3>
+      <input id="uid" placeholder="UID Player">
+      <input id="pname" placeholder="Player Name">
+      <select id="cheat">
+        <option>Aimbot</option>
+        <option>Wallhack</option>
+        <option>Speed Hack</option>
+        <option>Macro</option>
+        <option>Other</option>
+      </select>
+      <input id="proof" placeholder="Evidence Link (YouTube/TikTok)">
+      <button onclick="submitReport()">Submit Report</button>
     </div>
-    <span class="vip">VIP BUILD</span>
-  </header>  <main class="wrap">
-    <section class="card">
-      <h2>Headshot Panel</h2>
-      <div class="row"><div class="label">Auto Headshot</div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-      <div class="row"><div class="label">Headshot Rate</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-      <div class="row"><div class="label">Smart Aim Assist</div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div></section>
 
-<section class="card">
-  <h2>Combat Modules</h2>
-  <div class="row"><div class="label">Aim Lock</div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-  <div class="row"><div class="label">No Recoil</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-  <div class="row"><div class="label">Rapid Fire</div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-</section>
+    <div class="card">
+      <h3 id="allReportsTitle">Senarai Semua Report</h3>
+      <input type="text" id="searchInput" placeholder="Search UID/Nama" onkeyup="filterReports()">
+      <div id="reportList"></div>
+    </div>
+    <button onclick="logout()" id="logoutBtn">Log Keluar</button>
+  </div>
 
-<section class="card">
-  <h2>Player State</h2>
-  <div class="row"><div class="label">Invincibility</div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-  <div class="row"><div class="label">Speed Boost</div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
-  <div class="row"><div class="label">Wall Vision</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-</section>
+  <!-- ADMIN PAGE -->
+  <div id="adminPage" class="hidden">
+    <div class="card">
+      <h3>Admin Dashboard</h3>
+      <div>
+        <b>Total Report:</b> <span id="totalReports">0</span> |
+        <b>Confirmed Cheater:</b> <span id="totalCheater">0</span> |
+        <b>Clean:</b> <span id="totalClean">0</span>
+      </div>
+      <input type="text" id="searchAdmin" placeholder="Search UID/Nama" onkeyup="filterAdminReports()">
+      <div id="adminReports"></div>
+    </div>
+    <button onclick="logout()" id="adminLogout">Log Keluar</button>
+  </div>
 
-<section class="card">
-  <h2>System</h2>
-  <div class="row"><div class="label">Injection Status</div><div class="label">Idle</div></div>
-  <div class="row"><div class="label">Protection Mode</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-</section>
+</div>
 
-  </main>  <footer>© 2026 • PANEL BY BENZ — Minimal Premium Dashboard</footer>
+<script>
+// ---------- USERS DEMO ----------
+let users = {
+  "admin@anticheat.my": {pass:"admin123", role:"admin"},
+  "user@anticheat.my": {pass:"user123", role:"user"},
+  "user2@anticheat.my": {pass:"user234", role:"user"}
+};
+
+// ---------- LANGUAGES ----------
+let lang = localStorage.getItem("lang") || "bm";
+const text = {
+  bm:{
+    login:"Log Masuk", report:"Lapor Pemain", allReports:"Senarai Semua Report",
+    uid:"UID Pemain", name:"Nama Pemain", cheat:"Jenis Cheat", proof:"Pautan Bukti",
+    submit:"Hantar Laporan", logout:"Log Keluar",
+    status:"Status", clean:"Bersih", suspicious:"Dalam Siasatan", confirmed:"Cheater Disahkan",
+    totalReport:"Jumlah Report", totalCheater:"Jumlah Cheater", totalClean:"Jumlah Bersih",
+    search:"Cari UID/Nama"
+  },
+  en:{
+    login:"Login", report:"Report Player", allReports:"All Reports List",
+    uid:"Player UID", name:"Player Name", cheat:"Cheat Type", proof:"Evidence Link",
+    submit:"Submit Report", logout:"Logout",
+    status:"Status", clean:"Clean", suspicious:"Under Investigation", confirmed:"Confirmed Cheater",
+    totalReport:"Total Reports", totalCheater:"Total Cheater", totalClean:"Total Clean",
+    search:"Search UID/Name"
+  }
+};
+
+// ---------- REPORT DATA ----------
+let reports = JSON.parse(localStorage.getItem("reports")||"[]");
+let currentUser = null;
+
+// ---------- LANGUAGE FUNCTION ----------
+function setLang(l){
+  lang = l;
+  localStorage.setItem("lang",l);
+  document.getElementById("loginTitle").innerText = text[l].login;
+  document.getElementById("reportTitle").innerText = text[l].report;
+  document.getElementById("allReportsTitle").innerText = text[l].allReports;
+  document.getElementById("logoutBtn")?.innerText = text[l].logout;
+  document.getElementById("adminLogout")?.innerText = text[l].logout;
+}
+setLang(lang);
+
+// ---------- LOGIN ----------
+function login(){
+  let e=document.getElementById("email").value;
+  let p=document.getElementById("password").value;
+  if(!users[e] || users[e].pass!==p){alert("Login gagal"); return;}
+  currentUser = {email:e, role:users[e].role};
+  document.getElementById("loginPage").classList.add("hidden");
+  if(users[e].role=="admin"){ 
+    document.getElementById("adminPage").classList.remove("hidden"); 
+    loadAdminReports();
+  } else { 
+    document.getElementById("userPage").classList.remove("hidden"); 
+    loadReports();
+  }
+}
+
+// ---------- LOGOUT ----------
+function logout(){ location.reload(); }
+
+// ---------- SUBMIT REPORT ----------
+function submitReport(){
+  let uid=document.getElementById("uid").value;
+  let name=document.getElementById("pname").value;
+  let cheat=document.getElementById("cheat").value;
+  let proof=document.getElementById("proof").value;
+  if(!uid || !name){alert("Sila isi UID dan Nama"); return;}
+  reports.push({uid,name,cheat,proof,status:"Under Investigation"});
+  localStorage.setItem("reports",JSON.stringify(reports));
+  document.getElementById("uid").value=""; document.getElementById("pname").value=""; document.getElementById("proof").value="";
+  loadReports();
+  loadAdminReports();
+}
+
+// ---------- LOAD REPORTS FOR USER ----------
+function loadReports(){
+  let html=`<table>
+  <tr><th>UID</th><th>Nama</th><th>Cheat</th><th>Bukti</th><th>Status</th></tr>`;
+  reports.forEach(r=>{
+    let color = r.status=="Under Investigation"?"orange":r.status=="Confirmed Cheater"?"red":"green";
+    html+=`<tr>
+      <td>${r.uid}</td>
+      <td>${r.name}</td>
+      <td>${r.cheat}</td>
+      <td><a href="${r.proof}" target="_blank">View</a></td>
+      <td><span class="badge ${color}">${r.status}</span></td>
+    </tr>`;
+  });
+  html+="</table>";
+  document.getElementById("reportList").innerHTML=html;
+}
+
+// ---------- LOAD REPORTS FOR ADMIN ----------
+function loadAdminReports(){
+  let total = reports.length;
+  let cheater = reports.filter(r=>r.status=="Confirmed Cheater").length;
+  let clean = reports.filter(r=>r.status=="Clean").length;
+  document.getElementById("totalReports").innerText = total;
+  document.getElementById("totalCheater").innerText = cheater;
+  document.getElementById("totalClean").innerText = clean;
+
+  let html=`<table>
+  <tr><th>UID</th><th>Nama</th><th>Cheat</th><th>Bukti</th><th>Status</th><th>Action</th></tr>`;
+  reports.forEach((r,i)=>{
+    let color = r.status=="Under Investigation"?"orange":r.status=="Confirmed Cheater"?"red":"green";
+    html+=`<tr>
+      <td>${r.uid}</td>
+      <td>${r.name}</td>
+      <td>${r.cheat}</td>
+      <td><a href="${r.proof}" target="_blank">View</a></td>
+      <td><span class="badge ${color}">${r.status}</span></td>
+      <td>
+        <button onclick="approve(${i})">Confirm Cheater</button>
+        <button onclick="reject(${i})">Mark Clean</button>
+      </td>
+    </tr>`;
+  });
+  html+="</table>";
+  document.getElementById("adminReports").innerHTML=html;
+}
+
+// ---------- ADMIN ACTIONS ----------
+function approve(i){ reports[i].status="Confirmed Cheater"; localStorage.setItem("reports",JSON.stringify(reports)); loadReports(); loadAdminReports(); }
+function reject(i){ reports[i].status="Clean"; localStorage.setItem("reports",JSON.stringify(reports)); loadReports(); loadAdminReports(); }
+
+// ---------- SEARCH/FILTER ----------
+function filterReports(){
+  let val = document.getElementById("searchInput").value.toLowerCase();
+  let filtered = reports.filter(r=>r.uid.toLowerCase().includes(val) || r.name.toLowerCase().includes(val));
+  let html=`<table>
+  <tr><th>UID</th><th>Nama</th><th>Cheat</th><th>Bukti</th><th>Status</th></tr>`;
+  filtered.forEach(r=>{
+    let color = r.status=="Under Investigation"?"orange":r.status=="Confirmed Cheater"?"red":"green";
+    html+=`<tr>
+      <td>${r.uid}</td><td>${r.name}</td><td>${r.cheat}</td>
+      <td><a href="${r.proof}" target="_blank">View</a></td>
+      <td><span class="badge ${color}">${r.status}</span></td>
+    </tr>`;
+  });
+  html+="</table>";
+  document.getElementById("reportList").innerHTML=html;
+}
+
+function filterAdminReports(){
+  let val = document.getElementById("searchAdmin").value.toLowerCase();
+  let filtered = reports.filter(r=>r.uid.toLowerCase().includes(val) || r.name.toLowerCase().includes(val));
+  let html=`<table>
+  <tr><th>UID</th><th>Nama</th><th>Cheat</th><th>Bukti</th><th>Status</th><th>Action</th></tr>`;
+  filtered.forEach((r,i)=>{
+    let color = r.status=="Under Investigation"?"orange":r.status=="Confirmed Cheater"?"red":"green";
+    html+=`<tr>
+      <td>${r.uid}</td><td>${r.name}</td><td>${r.cheat}</td>
+      <td><a href="${r.proof}" target="_blank">View</a></td>
+      <td><span class="badge ${color}">${r.status}</span></td>
+      <td>
+        <button onclick="approve(${i})">Confirm Cheater</button>
+        <button onclick="reject(${i})">Mark Clean</button>
+      </td>
+    </tr>`;
+  });
+  html+="</table>";
+  document.getElementById("adminReports").innerHTML=html;
+}
+</script>
 </body>
 </html>
